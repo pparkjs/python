@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script>
+function fn_mod(){
+	document.frm.submit();
+}
+</script>
+</head>
+<body>
+<form action="emp_add_act" name="frm" method="post">
+	사번 : <input type="text" name="e_id"><br>
+	이름 : <input type="text" name="e_name"><br>
+	성별 : <input type="text" name="sex"><br>
+	주소 : <input type="text" name="addr"><br>
+	<input type="button" value="실행" onclick="fn_mod()" >
+</form>
+</body>
+</html>
