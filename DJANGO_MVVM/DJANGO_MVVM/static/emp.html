@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="jquery-3.6.4.js"></script>
+<script type="text/javascript">
+function fn_ajax(){
+	
+	var param = {
+		menu : '짬뽕'	
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "/ajax",
+		data : JSON.stringify(param),
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			console.log(res.a)
+		}
+	});
+
+}
+function fn_list(){
+	$.ajax({
+		type : "post",
+		url : "/ajax_emp_list",
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			var obj_tbody = document.querySelector("#my_tbody");
+			var list = res.list
+			
+			var txt = "";
+			
+			for(var i=0; i<list.length; i++){
+				var e = list[i];
+				var e_id = e.e_id;
+				var e_name = e.e_name;
+				var sex = e.sex;
+				var addr = e.addr;
+				
+				txt += `
+					<tr>
+						<td><a href="javascript:fn_detail('${e_id}')">${e_id}</a></td>
+						<td>${e_name}</td>
+						<td>${sex}</td>
+						<td>${addr}</td>
+					</tr>
+				`;
+			}
+			
+			obj_tbody.innerHTML = txt;
+			
+		},
+		error : function(xhr){
+			alert(xhr.status)
+		}
+	});
+}
+
+function fn_detail(e_id){
+	var param = {
+			e_id : e_id
+	}
+	$.ajax({
+		type : "post",
+		url : "/ajax_emp_detail",
+// 		data : {
+// 			'e_id' : e_id
+// 		},
+		data : JSON.stringify(param),
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			document.querySelector('#e_id').value = res.data.e_id	
+			document.querySelector('#e_name').value = res.data.e_name	
+			document.querySelector('#sex').value = res.data.sex
+			document.querySelector('#addr').value = res.data.addr	
+		},
+		error : function(xhr){
+			alert(xhr.status)
+		}
+	});
+}
+
+
+function fn_mod(){
+	var e_id = document.querySelector('#e_id').value
+	var e_name = document.querySelector('#e_name').value
+	var sex = document.querySelector('#sex').value
+	var addr = document.querySelector('#addr').value
+	
+	var param = {
+			e_id : e_id,
+			e_name : e_name,
+			sex : sex,
+			addr : addr
+	}
+		
+	$.ajax({
+		type : "post",
+		url : "/ajax_emp_update",
+		data : JSON.stringify(param),
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			if(res.res == '1'){
+				alert("정상적으로 수정되었습니다.")
+				document.querySelector('#e_id').value = ''
+				document.querySelector('#e_name').value = ''	
+				document.querySelector('#sex').value = ''
+				document.querySelector('#addr').value = ''
+				fn_list()
+			}
+		},
+		error : function(xhr){
+			alert(xhr.status)
+		}
+	});
+}
+
+function fn_add(){
+	var e_id = document.querySelector('#e_id').value
+	var e_name = document.querySelector('#e_name').value
+	var sex = document.querySelector('#sex').value
+	var addr = document.querySelector('#addr').value
+	
+	var param = {
+		e_id : e_id,
+		e_name : e_name,
+		sex : sex,
+		addr : addr
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "/ajax_emp_add",
+		data : JSON.stringify(param),
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			if(res.res == '1'){
+				alert("정상적으로 등록되었습니다.")
+				document.querySelector('#e_id').value = ''
+				document.querySelector('#e_name').value = ''	
+				document.querySelector('#sex').value = ''
+				document.querySelector('#addr').value = ''
+				fn_list()
+			}else{
+				alert("추가도중 오류가 발생하였습니다.")
+			}
+		},
+		error : function(xhr){
+			alert(xhr.status)
+		}
+	});
+}
+function fn_del(){
+	var e_id = document.querySelector('#e_id').value
+	
+	var param = {
+		e_id : e_id,
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "/ajax_emp_del",
+		data : JSON.stringify(param),
+		dataType : 'json',
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success : function(res){
+			if(res.res == '1'){
+				alert("정상적으로 삭제 되었습니다.")
+				document.querySelector('#e_id').value = ''
+				document.querySelector('#e_name').value = ''	
+				document.querySelector('#sex').value = ''
+				document.querySelector('#addr').value = ''
+				fn_list()
+			}else{
+				alert("삭제에 실패하였습니다.")
+			}
+		},
+		error : function(xhr){
+			alert(xhr.status)
+		}
+	});
+}
+</script>
+</head>
+<body onload="fn_list()">
+<table border="1">
+	<thead>
+		<tr>
+			<td>사번</td>
+			<td>이름</td>
+			<td>성별</td>
+			<td>주소</td>
+		</tr>
+	</thead>
+	<tbody id="my_tbody">
+		<tr>
+			<td colspan="4">
+				검색된 데이터가 없습니다.
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table border="1">
+	<tr>
+		<td>사번</td>
+		<td>
+			<input type="text" id="e_id">
+		</td>
+	</tr>
+	<tr>
+		<td>이름</td>
+		<td>
+			<input type="text" id="e_name">
+		</td>
+	</tr>
+	<tr>
+		<td>성별</td>
+		<td>
+			<input type="text" id="sex">
+		</td>
+	</tr>
+	<tr>
+		<td>주소</td>
+		<td>
+			<input type="text" id="addr">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input type="button" value="추가" onclick="fn_add()">
+			<input type="button" value="수정" onclick="fn_mod()">
+			<input type="button" value="삭제" onclick="fn_del()">
+		</td>
+	</tr>
+</table>
+</body>
+</html>
